@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Participation Time Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .scrollable-container {
+            width: 300px; /* Set the desired width */
+            height: 300px; /* Set the desired height */
+            overflow: auto; /* Enable scrollbars when content overflows */
+            margin: 0 auto; /* Center the container on the page */
+        }
+
+        .participant {
+            margin: 20px;
+        }
+
+        .participant-name {
+            font-weight: bold;
+        }
+
+        .participant-count {
+            font-size: 24px;
+        }
+
+        .participant-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Siphoning Activity</h1>
+ 
+    <div class="scrollable-container">
+        <div class="participant" id="participant1">
+            <p class="participant-name">MrLegendKiller</p>
+            <p>Time Participated: <span class="participant-count" id="mgmg-count">0</span> minutes</p>
+            <button class="participant-button" data-participant="mgmg">Participate</button>
+            <button class="participant-button" data-participant="mgmg" data-reset-for="mgmg">Reset</button>
+        </div>
+
+        <div class="participant" id="participant2">
+            <p class="participant-name">ChiquotiGhoxt</p>
+            <p>Time Participated: <span class="participant-count" id="zawzaw-count">0</span> minutes</p>
+            <button class="participant-button" data-participant="zawzaw">Participate</button>
+            <button class="participant-button" data-participant="zawzaw" data-reset-for="zawzaw">Reset</button>
+        </div>
+
+        <div class="participant" id="participant3">
+            <p class="participant-name">Daddykk</p>
+            <p>Time Participated: <span class="participant-count" id="kyawkyaw-count">0</span> minutes</p>
+            <button class="participant-button" data-participant="kyawkyaw">Participate</button>
+            <button class="participant-button" data-participant="kyawkyaw" data-reset-for="kyawkyaw">Reset</button>
+        </div>
+        <div class="participant" id="participant4">
+            <p class="participant-name">TezcaGMG</p>
+            <p>Time Participated: <span class="participant-count" id="tezcagmg-count">0</span> minutes</p>
+            <button class="participant-button" data-participant="tezcagmg">Participate</button>
+            <button class="participant-button" data-participant="tezcagmg" data-reset-for="tezcagmg">Reset</button>
+        </div>
+    </div>
+    <input type="text" class="filter-input" placeholder="Filter by name" oninput="filterParticipants(this.value)">
+    <script>
+        // Initialize counts from localStorage for all participants
+        const participants = ["mgmg", "zawzaw", "kyawkyaw","tezcagmg"];
+        participants.forEach(participant => {
+            let count = parseInt(localStorage.getItem(`participationCount-${participant}`)) || 0;
+            updateCount(participant, count);
+        });
+
+        // Add event listeners for all participants
+        participants.forEach(participant => {
+            const participateButtons = document.querySelectorAll(`[data-participant="${participant}"]`);
+            const resetButton = document.querySelector(`[data-reset-for="${participant}"]`);
+
+            participateButtons.forEach(participateButton => {
+                participateButton.addEventListener('click', function() {
+                    // Increment the count and update the display
+                    let currentCount = parseInt(localStorage.getItem(`participationCount-${participant}`)) || 0;
+                    let updatedCount = currentCount + 1;
+                    updateCount(participant, updatedCount);
+
+                    // Store the updated count in localStorage
+                    localStorage.setItem(`participationCount-${participant}`, updatedCount.toString());
+                });
+            });
+
+            resetButton.addEventListener('click', function() {
+                // Reset the count and update the display
+                updateCount(participant, 0);
+
+                // Remove the corresponding key from localStorage
+                localStorage.removeItem(`participationCount-${participant}`);
+            });
+        });
+        function updateCount(participant, count) {
+            document.getElementById(`${participant}-count`).textContent = count;
+        }
+        function filterParticipants(filter) {
+            filter = filter.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+            const participants = document.querySelectorAll('.participant');
+            const container = document.getElementById('participants-container');
+
+            let scrolled = false;
+
+            participants.forEach(participant => {
+                const nameElement = participant.querySelector('.participant-name');
+                const participantName = nameElement.textContent.toLowerCase();
+
+                if (participantName.includes(filter)) {
+                    participant.style.display = 'block';
+                    if (!scrolled) {
+                        container.scrollTop = participant.offsetTop;
+                        scrolled = true;
+                    }
+                } else {
+                    participant.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
